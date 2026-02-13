@@ -112,7 +112,7 @@
       var selectedLayerColor = null;
 
       fetch(
-        "https://raw.githubusercontent.com/TCEOuv/Ouvidorias-Municipais/main/contatos-ouvidorias-2025.csv",
+        "https://raw.githubusercontent.com/TCEOuv/Ouvidorias-Municipais/main/contatos-ouvidorias.csv",
       )
         .then((response) => response.text())
         .then((csv) => {
@@ -138,6 +138,9 @@
                   csvData[municipio] = [];
                 }
                 csvData[municipio].push(normalizedRow);
+                console.log(
+                  `Municipio: ${municipio}\nDados:\n${JSON.stringify(normalizedRow, null, 2)}`,
+                );
               });
             },
           });
