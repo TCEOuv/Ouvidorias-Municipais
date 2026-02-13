@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: row;
+        height: 100vh;
+        margin: 0;
+        background-color: #f8f8f8;
+      }
+
+      #sidebar {
+        width: 30%;
+        min-width: 250px;
+        max-width: 400px;
+        padding: 10px;
+        overflow-y: auto;
+        background: #f8f8f8;
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+      }
+
+      #map {
+        flex: 1;
+        height: 100%;
+        background-color: #f8f8f8;
+      }
+
+      #searchPanel {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      #municipioSelect {
+        flex: 1;
+        padding: 8px;
+        font-size: 1rem;
+      }
+
+      button {
+        padding: 8px 12px;
+        font-size: 1rem;
+        cursor: pointer;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+
+      #infoBox {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding: 10px;
+      }
+
+      .map-tooltip {
+        font-weight: bold;
+        background: white;
+        padding: 4px;
+        border-radius: 4px;
+        box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+      }
+
+      .leaflet-interactive {
+        outline: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="sidebar">
+      <div id="searchPanel">
+        <select id="municipioSelect" onchange="searchMunicipio(this.value)">
+          <option value="">Selecione um município...</option>
+        </select>
+        <button onclick="clearSearch()">Limpar</button>
+      </div>
+      <div id="infoBox">
+        <h2>Informações do Município</h2>
+        <div id="municipioInfo"></div>
+      </div>
+    </div>
+
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+      const MAP_SETTINGS = {
+        center: [-5.3, -39.5],
+        zoom: 8,
+        minZoom: 8,
+        maxZoom: 8,
+        zoomControl: false,
+        dragging: false,
+      };
+
+      var map = L.map("map", MAP_SETTINGS);
+      var municipiosData = []; // Municipio no Mapa
+      var csvData = {}; //Dados do CSV de cada município
+      var selectedLayer = null;
+      var selectedLayerColor = null;
+
+      fetch(
+        "https://raw.githubusercontent.com/TCEOuv/Ouvidorias-Municipais/main/contatos-ouvidorias-2025.csv",
+      )
+        .then((response) => response.text())
+        .then((csv) => {
+          Papa.parse(csv, {
+            header: true,
+            complete: function (results) {
+              csvData = {};
+
+              // Normaliza os nomes das colunas para minúsculas
+              const normalizedHeaders = results.meta.fields.map((field) =>
+                field.toLowerCase(),
+              );
+              results.data.forEach((row) => {
+                // Cria um objeto com os nomes das colunas normalizados
+                let normalizedRow = {};
+                normalizedHeaders.forEach((header) => {
+                  normalizedRow[header] = row[header.toUpperCase()];
+                });
+
+                let municipio = normalizedRow.municipio?.trim();
+                if (!municipio) return;
+                if (!csvData[municipio]) {
+                  csvData[municipio] = [];
+                }
+                csvData[municipio].push(normalizedRow);
+              });
+            },
+          });
+        });
+
+      fetch(
+        "https://raw.githubusercontent.com/TCEOuv/Ouvidorias-Municipais/main/geojson-municipios-ceara.json",
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          L.geoJson(data, {
+            style: function (feature) {
+              let nome = feature.properties.name.toUpperCase();
+              let temOuvidoria = false;
+
+              if (csvData[nome]) {
+                csvData[nome].forEach((element) => {
+                  if (element.ouvidor || element.email) {
+                    temOuvidoria = true;
+                  }
+                });
+              }
+
+              return {
+                color: "#000",
+                weight: 1,
+                fillColor: temOuvidoria ? "#134383" : "#d3d3d3",
+                fillOpacity: 1.0,
+              };
+            },
+            onEachFeature: function (feature, layer) {
+              municipiosData.push({
+                name: feature.properties.name,
+                layer: layer,
+              });
+              var select = document.getElementById("municipioSelect");
+              var option = document.createElement("option");
+              option.value = feature.properties.name;
+              option.textContent = feature.properties.name;
+              select.appendChild(option);
+
+              // Exibe o nome do município ao passar o mouse
+              layer.bindTooltip(feature.properties.name, {
+                permanent: false, // Mostra só ao passar o mouse
+                direction: "center", // Centraliza o nome dentro do município
+                className: "map-tooltip", // Classe CSS para personalização
+              });
+
+              layer.on("click", function () {
+                searchMunicipio(feature.properties.name);
+              });
+            },
+          }).addTo(map);
+        });
+
+      function searchMunicipio(selectedMunicipio) {
+        if (!selectedMunicipio)
+          return alert("Por favor, selecione um município!");
+        var municipio = municipiosData.find(
+          (m) => m.name === selectedMunicipio,
+        );
+        if (municipio) {
+          if (selectedLayer) {
+            selectedLayer.setStyle({
+              fillColor: selectedLayerColor,
+              weight: 1,
+            });
+          }
+          selectedLayerColor = municipio.layer.options.fillColor;
+          municipio.layer.setStyle({ fillColor: "yellow", weight: 3 });
+          selectedLayer = municipio.layer;
+
+          let dadosMunicipio = csvData[selectedMunicipio.toUpperCase()] || [];
+          if (dadosMunicipio.length === 0) {
+            document.getElementById("municipioInfo").innerHTML =
+              `<strong>${selectedMunicipio}</strong><br>Não há registros de ouvidoria.`;
+            return;
+          }
+
+          let infoHTML = `<strong><h3>${selectedMunicipio}</h3></strong>`;
+          dadosMunicipio.forEach((instituicao) => {
+            let instituicaoHTML = ` 
+                        <br>🟦 <strong>${instituicao.ente}:</strong><br>
+                    `;
+
+            if (instituicao.ouvidor) {
+              instituicaoHTML += `Responsável: ${instituicao.ouvidor}<br>`;
+            }
+            if (instituicao.email) {
+              instituicaoHTML += `Email: ${instituicao.email}<br>`;
+            }
+            if (instituicao.telefone) {
+              instituicaoHTML += `Telefone: ${instituicao.telefone}<br>`;
+            }
+            if (instituicao.endereco) {
+              instituicaoHTML += `Endereço: ${instituicao.endereco}<br>`;
+            }
+            if (instituicao.site) {
+              instituicaoHTML += `Site: <a href="${instituicao.site}" target="_blank">Acesse aqui</a><br>`;
+            }
+
+            // Levantamento de 2025 (só adiciona se houver pelo menos um dado preenchido)
+            let levantamento2025 = "";
+
+            if (
+              instituicao.ouvidor2025 ||
+              instituicao.email2025 ||
+              instituicao.telefone2025 ||
+              instituicao.endereco2025
+            ) {
+              levantamento2025 += `<br><strong>Levantamento de 2025</strong><br>`;
+
+              if (instituicao.ouvidor2025) {
+                levantamento2025 += `Responsável: ${instituicao.ouvidor2025}<br>`;
+              }
+              if (instituicao.email2025) {
+                levantamento2025 += `Email: ${instituicao.email2025}<br>`;
+              }
+              if (instituicao.telefone2025) {
+                levantamento2025 += `Telefone: ${instituicao.telefone2025}<br>`;
+              }
+              if (instituicao.endereco2025) {
+                levantamento2025 += `Endereço: ${instituicao.endereco2025}<br>`;
+              }
+            }
+
+            // Adiciona apenas se houver dados relevantes
+            if (
+              instituicaoHTML !==
+                ` <br>🟦 <strong>${instituicao.ente}:</strong><br>` ||
+              levantamento2025
+            ) {
+              infoHTML += instituicaoHTML + levantamento2025;
+            }
+          });
+
+          document.getElementById("municipioInfo").innerHTML = infoHTML;
+        }
+      }
+
+      function clearSearch() {
+        document.getElementById("municipioSelect").value = "";
+        document.getElementById("municipioInfo").innerHTML = "";
+        if (selectedLayer) {
+          selectedLayer.setStyle({ fillColor: selectedLayerColor, weight: 1 });
+        }
+      }
+    </script>
+  </body>
+</html>
