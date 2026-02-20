@@ -1,4 +1,4 @@
-MUNICIPIO,ENTE,OUVIDOR,TELEFONE,WHATSAPP,EMAIL,ACESSE A OUVIDORIA,ENDERECO,HORARIO
+Municipio,Ente,Ouvidor,Telefone,Whatsapp,E-mail,Site,Endereço,Horario de funcionamento
 ABAIARA,Prefeitura,Paula Vitória da Silva Moreira,(85) 98869-0116,,ouvidoria@abaiara.ce.gov.br,https://abaiara.ce.gov.br/ouvidoria/,"Rua Expedito Oliveira das Neves, nº 70 – Centro – Abaiara/CE",8h-12h / 13h-17h
 ACARAPE,Prefeitura,Thiago Soares Barroso de Freitas,,,ouvidoria@acarape.ce.gov.br,https://acarape.ce.gov.br/ouvidoria,"Rua José Guilherme Costa, s/n - Centro - CEP: 62785-000 – Acarape\CE",8h - 14h
 ACARAÚ,Prefeitura,João Mayson Moura Guilherme,(88) 9.9610.6664,,ouvidoria@acarape.ce.gov.br,https://acarau.ce.gov.br/ouvidoria,"Rua Major Coelho, 185 - Centro. Cep: 62.580.000","De Segunda a Quinta de 08:00h às 12:00h e de 14:00h às 17:00h, e Sexta de 08:00 às 14:00h"
@@ -20,8 +20,8 @@ ARNEIROZ,Prefeitura,,(88) 3419-1020,,ouvidoria@arneiroz.ce.gov.br,https://www.ar
 ASSARÉ,Prefeitura,,(88) 99656-1118,,ouvidoriamunassare@gmail.com,https://assare.ce.gov.br/ouvidoria,"Rua Doutor Paiva, 415 - Centro - Assaré\CE",
 AURORA,Prefeitura,Cintia Gregorio dos Santos,(85) 99684-1509,,ouvidoria@aurora.ce.gov.br,https://aurora.ce.gov.br/ouvidoria,"Av. Antônio Ricardo, Nº 43 - Centro - CEP: 63.360-000 – Aurora/CE",De Segunda à Sexta das 08:00hs às 12:00hs e 13:00hs às 17:00hs
 BAIXIO,Prefeitura,,,,ouvidoria@baixio.ce.gov.br,https://www.baixio.ce.gov.br/ouvidoria-sic/,"Praça dos Três Poderes, Centro Adm. Cícero Henrique Brasileiro, S/N - Centro - CEP:63320-000",
-BANABUIU,Prefeitura,Francisco Ferreira do N. N.,(88) 9.9903-1442,,ouvidoria@banabuiu.ce.gov.br,https://esic.banabuiu.ce.gov.br/ouvidoria,"RUA JOAQUIM NOBRE DE OLIVEIRA, Nº 171",
-BARBALHA,Prefeitura,,(88) 9.9455-1031,(88) 9 9455-1031,ouvidoria@barbalha.ce.gov.br,https://barbalha.ce.gov.br/ouvidoria,"Av. Domingos Sampaio Miranda, nº 715, Buriti, CEP: 63.092-394, Barbalha/CE",08:00 às 12:00 e das 13:00 às 17:00
+ BANABUIU,Prefeitura,Francisco Ferreira do N. N.,(88) 9.9903-1442,,ouvidoria@banabuiu.ce.gov.br,https://esic.banabuiu.ce.gov.br/ouvidoria,"RUA JOAQUIM NOBRE DE OLIVEIRA, Nº 171",
+BARBALHA,Prefeitura,PRISCILA JACINTO LEITE FERNANDES TAVORA,(88) 9.9455-1031,(88) 9 9455-1031,ouvidoria@barbalha.ce.gov.br,https://barbalha.ce.gov.br/ouvidoria,"Av. Domingos Sampaio Miranda, nº 715, Buriti, CEP: 63.092-394, Barbalha/CE",08:00 às 12:00 e das 13:00 às 17:00
 BARREIRA,Prefeitura,José Hédio Rodrigues Torres Filho,(85) 99438-2293,,ouvidoriageralbarreira@gmail.com,https://www.barreira.ce.gov.br/ouvidoria,"Rua Lúcio Tôrres, s/n - Centro - Barreira/CE",De segunda a sexta das 08:00 hs às 16:00 hs
 BARRO,Prefeitura,Jader Fernandes de Melo,(88) 99632-0398,,controladoria@barro.ce.gov.br,https://www.barro.ce.gov.br/ouvidoria,"Rua Firmino Tavares, 246, Centro - Barro/CE",De Segunda a Sexta Feira das 07:00h as 13:00h
 BARROQUINHA,Prefeitura,,(88)3623-1137,,ouvidoria@barroquinha.ce.gov.br,https://www.gdic.com.br/modulo/ouvidoria/login/1183490,"Rua 11de maio, 739,centro,Barroquinha, CE",Segunda a Sexta das 8 as 12 e de 14 as 18hs
@@ -56,11 +56,23 @@ CROATÁ,Prefeitura,,(88) 3659-1164,,ouvidoria@croata.ce.gov.br,https://croata.ce
 CRUZ,Prefeitura,,88 99259-3006,,ouvidoria@cruz.ce.gov.br,https://prefeitura.cruz.ce.gov.br/transparencia-municipal/ouvidoria/,"Praça dos 03 Poderes, SN Aningas - Cruz/CE",
 DEPUTADO IRAPUAN PINHEIRO,Prefeitura,Josefa de Oliveira,(88) 9.81258271,,ouvidoriacontroladoria@gmail.com,https://www.irapuanpinheiro.ce.gov.br/ouvidoria,Avenida dos Três Poderes - Nº 75 - Centro - Dep. Irapuan Pinheiro-CE - CEP: 63.645-000,De Segunda à Sexta das 7:30 às 11:30 e 13:00 ás 17:00
 ERERÉ,Prefeitura,,,,,https://www.erere.ce.gov.br/ouvidoria,,
-EUSÉBIO,Prefeitura,JOCASTA CUNHA VIEIRA,,,ouvidoria@eusebio.ce.gov.br,https://eusebio.ce.gov.br/ouvidoria,"AV. CEL. CÍCERO DE SÁ, Nº 100 - CENTRO - CEP: 61.760-435","De Segunda à Sexta-feira, das 08:00 às 16:00."
+EUSÉBIO,Prefeitura,JOCASTA CUNHA VIEIRA,(85) 3360-0050,,ouvidoria@eusebio.ce.gov.br,https://eusebio.ce.gov.br/ouvidoria,"AV. CEL. CÍCERO DE SÁ, Nº 100 - CENTRO - CEP: 61.760-435","De Segunda à Sexta-feira, das 08:00 às 16:00."
 FARIAS BRITO,Prefeitura,,"(88) 3544-1223
 (88) 3544-1193",,,https://www.fariasbrito.ce.gov.br/ouvidoria/,"ua José Alves Pimentel, nº 87, Bairro: Centro, Farias Brito/Ceará.",.
 FORQUILHA,Prefeitura,Jorge Urculino Martins,(88) 9.9450-0748,,ouvidoria@forquilha.ce.gov.br,https://www.forquilha.ce.gov.br/ouvidoria,Ouvidoria Geral do Município - Prefeitura Municipal de Forquilha,De Segunda a Sexta - Das 07:00h às 13:00h
-FORTALEZA,Prefeitura,,(85) 8814-4478,,,https://catalogodeservicos.fortaleza.ce.gov.br/categoria/ouvidoria,,
+FORTALEZA,Secretaria Municipal de Educação,Cláudia Patrícia,(85) 3459-6767,,ouvidoria@educacao.fortaleza.ce.gov.br,ouvidoria.cgm.fortaleza.ce.gov.br,"Av. Desembargador Moreira, 2875","De segunda a sexta-feira, de 8 às 12 horas e de 13 às 17 horas"
+FORTALEZA,Prefeitura,Elda Gomes de Pinho,(85) 3488-2684,,,,"Rua Ildefonso Albano, 2050","De segunda a sexta-feira, de 8 às 17 horas"
+FORTALEZA,"Fundação de Ciência, Tecnologia e Inovação",Maria Izabel Cidrão,,,,,"Rua Padre Valdevino, 1040","De segunda a sexta-feira, de 8 às 17 horas"
+FORTALEZA,Instituto de Previdência do Município,Mirelle Clemente Mota,(85) 3513-7969,,ouvidoria@ipmfor.ce.gov.br,impfor.ce.gov.br,"Av. da Universidade, 1940","De segunda a sexta-feira, de 8 às 17 horas"
+FORTALEZA,Procuradoria Geral do Município,Natália Bezerra,(85) 2018-0211,,ouvidoria@pgm.fortaleza.ce.gov.br,ouvidoria.cgm.fortaleza.ce.gov.br,"Rua Israel Bezerra, 570 - 5º Andar","De segunda a sexta-feira, de 8 às 12 horas e de 13 às 17 horas"
+FORTALEZA,Secretaria Municipal dos Direitos Humanos e Desenvolvimento Social,Raquel Almeida,(85) 9184-4766,,ouvidoria.sdhds@sdhds.fortaleza.ce.gov.br,ouvidoria.cgm.fortaleza.ce.gov.br,Rua Padre Pedro de Alencar,"De segunda a sexta-feira, de 8 às 17 horas"
+FORTALEZA,Secretaria Municipal de Conservação e Serviços Públicos,Ronaldo,,,ouvidoria.scsp@fortaleza.ce.gov.br,,"Av. Pontes Vieira, 2391","De segunda a sexta-feira, de 8 às 17 horas"
+FORTALEZA,Secretaria Executiva Regional V,Josylane de Moura Araújo,156,(85) 98814-4478,ouvidoriageral.cgm@cgm.fortaleza.ce.gov.br,ouvidoria.cgm.fortaleza.ce.gov.br,"Rua Israel Bezerra, 570 - 3º Andar","De segunda a sexta-feira, de 7 às 19 horas"
+FORTALEZA,Secretaria Executiva Regional IV,Ana Fabíola Cavalcante Bezerra,156,,ouvidoriageral.cgm@cgm.fortaleza.ce.gov.br,,"Rua Israel Bezerra, 570 - 3º Andar","De segunda a sexta-feira, de 7 às 19 horas"
+FORTALEZA,Secretaria Executiva Regional X,Manoela Sousa Garcez Torres,(85) 99955-4444,,manoela.garcez@sr10.fortaleza.ce.gov.br,ouvidoria.cgm.fortaleza.ce.gov.br,"Rua Francisco Glicério, 290 - 1º Andar","De segunda a sexta-feira, de 8 às 12 horas e de 13 às 16 horas"
+FORTALEZA,Secretaria de Segurança Cidadã,Samuel Souza Holanda Maurício,(85) 98400-9051,,ouvidoria@sesec.fortaleza.ce.gov.br,,"Av. Jovita Feitosa, 1264 - Parquelândia","De segunda a sexta-feira, de 8 às 17 horas"
+FORTALEZA,Autarquia de Urbanismo e Paisagismo (Urbfor),Raquel / Carlos,(85) 99154-3062,,ouvidoria@urbfor.fortaleza.ce.gov.br,,"Av. dos Paroaras, 100 - Passaré","De segunda a sexta-feira, de 8 às 17 horas"
+FORTALEZA,Câmara,Jardelson Ramos,(85) 3444-8307,,ouvidoria@cmfor.ce.gov.br,www.cmfor.ce.gov.br,"Rua Tompson Bulcão, 830","De segunda a sexta-feira, de 8 às 17 horas"
 FORTIM,Prefeitura,Cintia Rodrigues da Silva,(88) 3413-1053,,ouvidoria@fortim.ce.gov.br,https://www.fortim.ce.gov.br/ouvidoria,"Vila da Paz, 40, Bloco D - Fortim/CE",De Segunda a Sexta das 08:00 hs às 14:00 hrs
 FRECHEIRINHA,Prefeitura,,88. 36551200,,ouvidoria@frecheirinha.ce.gov.br,https://www.frecheirinha.ce.gov.br/ouvidoria,Centro Administrativo de Frecheirinha,De Segunda a Sexta das 08h00 às 17h00
 GENERAL SAMPAIO,Prefeitura,FRANCISCA LUCIA BEZERRA UCHOA BARBOSA,(85) 3357-1088,(85) 9 8818-9684,ouvidoria@generalsampaio.ce.gov.br,https://www.generalsampaio.ce.gov.br/ouvidoria,"Av. José Severino Filho, 257 - Sagrado Coração de Jesus - General Sampaio/CE",SEGUNDA A SEXTA DAS 08:00 HS ÀS 17:00HS
@@ -118,7 +130,7 @@ MILHÃ,Prefeitura,FRANCISCO SIVANDO PINHEIRO,(88) 9 9665-0508,(88) 9 9665-0508,o
 MIRAÍMA,Prefeitura,Antonia Maria Alves Pinheiro Pinto,(88) 36391167,,ouvidoria@miraima.ce.gov.br,https://www.miraima.ce.gov.br/ouvidoria,ESPLANADA DA ESTAÇÃO,SEGUNDA A SEXTA: 07h às 13h
 MISSÃO VELHA,Prefeitura,Regilânio Macedo,,,controladoriaeouvidoria@missaovelha.ce.gov.br,https://missaovelha.ce.gov.br/secretarias/secretaria-controladoria-e-ouvidoria-geral/,"Paço Municipal Sebastião Pereira Cruz
 Rua José leite landim Júnior, 64 Centro - Missão Velha/CE",8hs às 14hs
-MOMBAÇA,Prefeitura,Francimario Ferreira de Oliveira,(88) 9 8858-9996,(88) 9 8858-9996,ouvidoria@mombaca.ce.gov.br,https://www.mombaca.ce.gov.br/ouvidoria,RUA DONA ANÉSIA CASTELO 01 - ALTOS,de Segunda a Sexta 08:00 as 12:00 e das 14:00 as 17:00
+MOMBAÇA,Prefeitura,ANA KAROLINE GOMES CAVALCANTE,(88) 9 8858-9996,(88) 9 8858-9996,ouvidoria@mombaca.ce.gov.br,https://www.mombaca.ce.gov.br/ouvidoria,RUA DONA ANÉSIA CASTELO 01 - ALTOS,de Segunda a Sexta 08:00 as 12:00 e das 14:00 as 17:00
 MONSENHOR TABOSA,Prefeitura,MARIA OLIVIA MARTINS MELO,(88) 3696-1117,,ouvidoriageral@monsenhortabosa.ce.gov.br,https://www.monsenhortabosa.ce.gov.br/ouvidoria,"Praça 07 de Setembro, 15 - Centro - Monsenhor Tabosa/CE",Segunda a Sexta de 08:00 ás 12:00h e das 13:30h ás 17:30h
 MORADA NOVA,Prefeitura,KAULA SILVA QUEIROZ,(88)3422-1381,,ouvidoria@moradanova.ce.gov.br,https://www.moradanova.ce.gov.br/ouvidoria,"Av. Manoel Castro, 726, Centro, Morada Nova - CE, 62940-000",De segunda a sexta das 07:00 hs às 13:00 hs
 MORAÚJO,Prefeitura,,,,,https://ouvidoria.moraujo.ce.gov.br/esic/manifestacao,,
@@ -151,7 +163,7 @@ PIQUET CARNEIRO,Prefeitura,LUIZ ROBERTO PESSOA AIRES FILHO,(88) 3516-1800: 88.99
 PIRES FERREIRA,Prefeitura,,(88) 3651-1081,,ouvidoria@piresferreira.ce.gov.br,https://www.piresferreira.ce.gov.br/ouvidoria.php,"RUA MARIA ANTUSA SOARES PASSOS, s/n
 CENTRO
 PIRES FERREIRA-",Segunda à Sexta-Feira de 08:00hs às 17:00hs
-PORANGA,Prefeitura,,(88) 3658-1588,,ouvidoria@poranga.ce.gov.br,https://www.poranga.ce.gov.br/ouvidoria,"Av. Doutor Epitácio de Pinho, Anexo, s/n - Eufrasino Neto",DE SEGUNDA A SEXTA DAS 08:00HRS ÀS 14:00HRS
+PORANGA,Prefeitura,ANTONIO VALDIR GOMES LIMA,(88) 3658-1588,(88) 9669-4896,ouvidoria@poranga.ce.gov.br,https://www.poranga.ce.gov.br/ouvidoria,"Av. Doutor Epitácio de Pinho, Anexo, s/n - Eufrasino Neto",DE SEGUNDA A SEXTA DAS 08:00HRS ÀS 14:00HRS
 PORTEIRAS,Prefeitura,,,,,https://porteiras.ce.gov.br/ouvidoria/,,
 POTENGI,Prefeitura,,,,,https://www.potengi.ce.gov.br/ouvidoria,,
 POTIRETAMA,Prefeitura,,(88) 9 9613-2273,,ouvidoria@potiretama.ce.gov.br,https://www.potiretama.ce.gov.br/ouvidoria,"RUA EXPEDITO LEITE DA SILVA, Nº 33 CENTRO, CEP: 62990-000",De segunda a sexta as 08:00 hs à 17:00 hs
