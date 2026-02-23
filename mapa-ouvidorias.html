@@ -118,83 +118,84 @@
         .then((csv) => {
           Papa.parse(csv, {
             header: true,
+            skipEmptyLines: true,
+            transformHeader: (header) => header.toLowerCase().trim(),
             complete: function (results) {
-              csvData = {};
-
-              // Normaliza os nomes das colunas para minúsculas
-              const normalizedHeaders = results.meta.fields.map((field) =>
-                field.toLowerCase(),
-              );
               results.data.forEach((row) => {
-                // Cria um objeto com os nomes das colunas normalizados
-                let normalizedRow = {};
-                normalizedHeaders.forEach((header) => {
-                  normalizedRow[header] = row[header.toUpperCase()];
-                });
+                const municipio = row.municipio?.trim().toUpperCase();
+                const ente = row.ente?.trim() || "Não Informado";
 
-                let municipio = normalizedRow.municipio?.trim();
                 if (!municipio) return;
+
                 if (!csvData[municipio]) {
-                  csvData[municipio] = [];
+                  csvData[municipio] = {};
                 }
-                csvData[municipio].push(normalizedRow);
-                console.log(
-                  `Municipio: ${municipio}\nDados:\n${JSON.stringify(normalizedRow, null, 2)}`,
-                );
+
+                if (!csvData[municipio][ente]) {
+                  csvData[municipio][ente] = [];
+                }
+
+                csvData[municipio][ente].push(row);
               });
+
+              loadMap();
             },
           });
         });
 
-      fetch(
-        "https://raw.githubusercontent.com/TCEOuv/Ouvidorias-Municipais/main/geojson-municipios-ceara.json",
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          L.geoJson(data, {
-            style: function (feature) {
-              let nome = feature.properties.name.toUpperCase();
-              let temOuvidoria = false;
+      function loadMap() {
+        fetch(
+          "https://raw.githubusercontent.com/TCEOuv/Ouvidorias-Municipais/main/geojson-municipios-ceara.json",
+        )
+          .then((response) => response.json())
+          .then((data) => {
+            L.geoJson(data, {
+              style: function (feature) {
+                const municipioNome = feature.properties.name.toUpperCase();
+                let temOuvidoria = false;
 
-              if (csvData[nome]) {
-                csvData[nome].forEach((element) => {
-                  if (element.ouvidor || element.email) {
-                    temOuvidoria = true;
-                  }
+                if (csvData[municipioNome]) {
+                  const entidades = Object.values(csvData[municipioNome]);
+
+                  temOuvidoria = entidades.some((dados) => {
+                    return dados.length > 0;
+                  });
+                }
+
+                return {
+                  color: "#000",
+                  weight: 1,
+                  fillColor: temOuvidoria ? "#134383" : "#d3d3d3",
+                  fillOpacity: 1.0,
+                };
+              },
+              onEachFeature: function (feature, layer) {
+                municipiosData.push({
+                  name: feature.properties.name,
+                  layer: layer,
                 });
-              }
 
-              return {
-                color: "#000",
-                weight: 1,
-                fillColor: temOuvidoria ? "#134383" : "#d3d3d3",
-                fillOpacity: 1.0,
-              };
-            },
-            onEachFeature: function (feature, layer) {
-              municipiosData.push({
-                name: feature.properties.name,
-                layer: layer,
-              });
-              var select = document.getElementById("municipioSelect");
-              var option = document.createElement("option");
-              option.value = feature.properties.name;
-              option.textContent = feature.properties.name;
-              select.appendChild(option);
+                let select = document.getElementById("municipioSelect");
+                let option = document.createElement("option");
 
-              // Exibe o nome do município ao passar o mouse
-              layer.bindTooltip(feature.properties.name, {
-                permanent: false, // Mostra só ao passar o mouse
-                direction: "center", // Centraliza o nome dentro do município
-                className: "map-tooltip", // Classe CSS para personalização
-              });
+                option.value = feature.properties.name;
+                option.textContent = feature.properties.name;
+                select.appendChild(option);
 
-              layer.on("click", function () {
-                searchMunicipio(feature.properties.name);
-              });
-            },
-          }).addTo(map);
-        });
+                // Exibe o nome do município ao passar o mouse
+                layer.bindTooltip(feature.properties.name, {
+                  permanent: false, // Mostra só ao passar o mouse
+                  direction: "center", // Centraliza o nome dentro do município
+                  className: "map-tooltip", // Classe CSS para personalização
+                });
+
+                layer.on("click", function () {
+                  searchMunicipio(feature.properties.name);
+                });
+              },
+            }).addTo(map);
+          });
+      }
 
       function searchMunicipio(selectedMunicipio) {
         if (!selectedMunicipio)
@@ -213,68 +214,30 @@
           municipio.layer.setStyle({ fillColor: "yellow", weight: 3 });
           selectedLayer = municipio.layer;
 
-          let dadosMunicipio = csvData[selectedMunicipio.toUpperCase()] || [];
-          if (dadosMunicipio.length === 0) {
+          const municipioNome = selectedMunicipio.toUpperCase();
+          let dadosMunicipio = csvData[municipioNome] || {};
+
+          const entidadesMunicipio = Object.keys(dadosMunicipio);
+
+          if (Object.keys(dadosMunicipio).length === 0) {
             document.getElementById("municipioInfo").innerHTML =
               `<strong>${selectedMunicipio}</strong><br>Não há registros de ouvidoria.`;
             return;
           }
 
           let infoHTML = `<strong><h3>${selectedMunicipio}</h3></strong>`;
-          dadosMunicipio.forEach((instituicao) => {
-            let instituicaoHTML = ` 
-                        <br>🟦 <strong>${instituicao.ente}:</strong><br>
-                    `;
 
-            if (instituicao.ouvidor) {
-              instituicaoHTML += `Responsável: ${instituicao.ouvidor}<br>`;
-            }
-            if (instituicao.email) {
-              instituicaoHTML += `Email: ${instituicao.email}<br>`;
-            }
-            if (instituicao.telefone) {
-              instituicaoHTML += `Telefone: ${instituicao.telefone}<br>`;
-            }
-            if (instituicao.endereco) {
-              instituicaoHTML += `Endereço: ${instituicao.endereco}<br>`;
-            }
-            if (instituicao.site) {
-              instituicaoHTML += `Site: <a href="${instituicao.site}" target="_blank">Acesse aqui</a><br>`;
-            }
+          Object.keys(dadosMunicipio).forEach((ente) => {
+            // Como cada ente é uma lista, pegamos o primeiro registro [0]
+            const d = dadosMunicipio[ente][0];
 
-            // Levantamento de 2025 (só adiciona se houver pelo menos um dado preenchido)
-            let levantamento2025 = "";
-
-            if (
-              instituicao.ouvidor2025 ||
-              instituicao.email2025 ||
-              instituicao.telefone2025 ||
-              instituicao.endereco2025
-            ) {
-              levantamento2025 += `<br><strong>Levantamento de 2025</strong><br>`;
-
-              if (instituicao.ouvidor2025) {
-                levantamento2025 += `Responsável: ${instituicao.ouvidor2025}<br>`;
-              }
-              if (instituicao.email2025) {
-                levantamento2025 += `Email: ${instituicao.email2025}<br>`;
-              }
-              if (instituicao.telefone2025) {
-                levantamento2025 += `Telefone: ${instituicao.telefone2025}<br>`;
-              }
-              if (instituicao.endereco2025) {
-                levantamento2025 += `Endereço: ${instituicao.endereco2025}<br>`;
-              }
-            }
-
-            // Adiciona apenas se houver dados relevantes
-            if (
-              instituicaoHTML !==
-                ` <br>🟦 <strong>${instituicao.ente}:</strong><br>` ||
-              levantamento2025
-            ) {
-              infoHTML += instituicaoHTML + levantamento2025;
-            }
+            infoHTML += `<div style="margin-bottom:10px; border-left: 4px solid #134383; padding-left:10px;">
+              <strong>🟦 ${ente}</strong><br>
+              ${d.ouvidor ? `Responsável: ${d.ouvidor}<br>` : ""}
+              ${d.email ? `Email: ${d.email}<br>` : ""}
+              ${d.telefone ? `Tel: ${d.telefone}<br>` : ""}
+              ${d.site ? `<a href="${d.site}" target="_blank">Acesse o Site</a>` : ""}
+              </div>`;
           });
 
           document.getElementById("municipioInfo").innerHTML = infoHTML;
