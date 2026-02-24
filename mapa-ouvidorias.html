@@ -15,6 +15,10 @@
         background-color: #f8f8f8;
       }
 
+      #not-found-text {
+        color: tomato;
+      }
+
       #sidebar {
         width: 30%;
         min-width: 250px;
@@ -65,6 +69,32 @@
         padding: 10px;
       }
 
+      .ente-card {
+        margin-bottom: 15px;
+        border-left: 5px solid #134383;
+        background: #f9f9f9;
+        padding: 10px;
+        border-radius: 0 5px 5px 0;
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05);
+      }
+      .ente-title {
+        font-weight: bold;
+        color: #134383;
+        border-bottom: 1px solid #ddd;
+        margin-bottom: 8px;
+        padding-bottom: 3px;
+      }
+      .btn-site {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 5px 10px;
+        background: #134383;
+        color: white;
+        text-decoration: none;
+        border-radius: 3px;
+        font-size: 0.85em;
+      }
+
       .map-tooltip {
         font-weight: bold;
         background: white;
@@ -105,11 +135,12 @@
         dragging: false,
       };
 
-      var map = L.map("map", MAP_SETTINGS);
-      var municipiosData = []; // Municipio no Mapa
-      var csvData = {}; //Dados do CSV de cada município
-      var selectedLayer = null;
-      var selectedLayerColor = null;
+      let map = L.map("map", MAP_SETTINGS);
+      let geojsonLayer = null;
+      let municipiosData = []; // Municipio no Mapa
+      let csvData = {}; //Dados do CSV de cada município
+      let selectedLayer = null;
+      let selectedLayerColor = null;
 
       fetch(
         "https://raw.githubusercontent.com/TCEOuv/Ouvidorias-Municipais/main/contatos-ouvidorias.csv",
@@ -122,8 +153,8 @@
             transformHeader: (header) => header.toLowerCase().trim(),
             complete: function (results) {
               results.data.forEach((row) => {
-                const municipio = row.municipio?.trim().toUpperCase();
-                const ente = row.ente?.trim() || "Não Informado";
+                const municipio = normalizarTexto(row.municipio);
+                const ente = normalizarTexto(row.ente);
 
                 if (!municipio) return;
 
@@ -136,6 +167,11 @@
                 }
 
                 csvData[municipio][ente].push(row);
+
+                console.log(
+                  `Municipio: ${municipio}, Ente: ${ente}, Dados:`,
+                  row,
+                );
               });
 
               loadMap();
@@ -149,17 +185,29 @@
         )
           .then((response) => response.json())
           .then((data) => {
-            L.geoJson(data, {
+            // 1. Criamos a camada GeoJSON
+            geojsonLayer = L.geoJson(data, {
               style: function (feature) {
-                const municipioNome = feature.properties.name.toUpperCase();
+                const municipioMapa = normalizarTexto(feature.properties.name);
                 let temOuvidoria = false;
 
-                if (csvData[municipioNome]) {
-                  const entidades = Object.values(csvData[municipioNome]);
+                // Busca o município no csvData (comparando nomes normalizados)
+                const chaveMunicipio = Object.keys(csvData).find(
+                  (key) => normalizarTexto(key) === municipioMapa,
+                );
 
-                  temOuvidoria = entidades.some((dados) => {
-                    return dados.length > 0;
-                  });
+                if (chaveMunicipio && csvData[chaveMunicipio]) {
+                  const dadosMunicipio = csvData[chaveMunicipio];
+
+                  // Critério: Apenas se houver informação de PREFEITURA
+                  const chavePrefeitura = Object.keys(dadosMunicipio).find(
+                    (key) => normalizarTexto(key) === "PREFEITURA",
+                  );
+
+                  if (chavePrefeitura && dadosMunicipio[chavePrefeitura]) {
+                    // Verifica se a lista da prefeitura tem registros
+                    temOuvidoria = dadosMunicipio[chavePrefeitura].length > 0;
+                  }
                 }
 
                 return {
@@ -170,86 +218,168 @@
                 };
               },
               onEachFeature: function (feature, layer) {
-                municipiosData.push({
-                  name: feature.properties.name,
+                const nomeOriginal = feature.properties.name;
+                const nomeNormalizado = normalizarTexto(nomeOriginal);
+
+                // Armazenamento para busca rápida (Dicionário)
+                municipiosData[nomeNormalizado] = {
+                  name: nomeOriginal,
                   layer: layer,
+                };
+
+                // Tooltip (Nome do município ao passar o mouse)
+                layer.bindTooltip(nomeOriginal, {
+                  sticky: true,
+                  direction: "auto",
+                  className: "map-tooltip",
                 });
 
-                let select = document.getElementById("municipioSelect");
-                let option = document.createElement("option");
+                // Eventos de Interatividade
+                layer.on({
+                  mouseover: (e) => {
+                    const el = e.target;
 
-                option.value = feature.properties.name;
-                option.textContent = feature.properties.name;
-                select.appendChild(option);
-
-                // Exibe o nome do município ao passar o mouse
-                layer.bindTooltip(feature.properties.name, {
-                  permanent: false, // Mostra só ao passar o mouse
-                  direction: "center", // Centraliza o nome dentro do município
-                  className: "map-tooltip", // Classe CSS para personalização
-                });
-
-                layer.on("click", function () {
-                  searchMunicipio(feature.properties.name);
+                    if (el != selectedLayer) {
+                      el.setStyle({
+                        weight: 2,
+                        color: "#FFF",
+                        fillOpacity: 0.8,
+                      });
+                    }
+                  },
+                  mouseout: (e) => {
+                    if (e.target != selectedLayer) {
+                      geojsonLayer.resetStyle(e.target);
+                    }
+                  },
+                  click: () => searchMunicipio(nomeOriginal),
                 });
               },
             }).addTo(map);
-          });
+
+            // 2. População do Select (Otimizada com DocumentFragment)
+            popularSelect(data.features);
+
+            // 3. Ajuste de enquadramento (Faz o mapa focar no Ceará)
+            map.fitBounds(geojsonLayer.getBounds());
+          })
+          .catch((err) => console.error("Erro ao carregar GeoJSON:", err));
       }
 
       function searchMunicipio(selectedMunicipio) {
-        if (!selectedMunicipio)
-          return alert("Por favor, selecione um município!");
-        var municipio = municipiosData.find(
-          (m) => m.name === selectedMunicipio,
-        );
-        if (municipio) {
-          if (selectedLayer) {
-            selectedLayer.setStyle({
-              fillColor: selectedLayerColor,
-              weight: 1,
-            });
+        if (!selectedMunicipio) return;
+
+        // 1. Normalização para garantir o "match" perfeito
+        const nomeNormalizado = normalizarTexto(selectedMunicipio);
+        const municipioAlvo = municipiosData[nomeNormalizado];
+
+        if (municipioAlvo) {
+          const layer = municipioAlvo.layer;
+
+          // 2. Lógica de Destaque Visual (Highlight)
+          // Se já havia um município selecionado, resetamos a cor dele
+          if (selectedLayer && geojsonLayer) {
+            geojsonLayer.resetStyle(selectedLayer);
           }
-          selectedLayerColor = municipio.layer.options.fillColor;
-          municipio.layer.setStyle({ fillColor: "yellow", weight: 3 });
-          selectedLayer = municipio.layer;
 
-          const municipioNome = selectedMunicipio.toUpperCase();
-          let dadosMunicipio = csvData[municipioNome] || {};
+          // Guardamos o estado atual e destacamos o novo
+          selectedLayer = layer;
+          layer.setStyle({
+            fillColor: "yellow",
+            weight: 3,
+            color: "#000",
+            fillOpacity: 0.8,
+          });
 
-          const entidadesMunicipio = Object.keys(dadosMunicipio);
+          // 4. Busca e Exibição dos Dados no Painel Lateral
+          // Procuramos no csvData usando a chave normalizada
+          const chaveCsv = Object.keys(csvData).find(
+            (k) => normalizarTexto(k) === nomeNormalizado,
+          );
+          const dadosMunicipio = csvData[chaveCsv] || {};
+
+          const municipioInfoDiv = document.getElementById("municipioInfo");
 
           if (Object.keys(dadosMunicipio).length === 0) {
-            document.getElementById("municipioInfo").innerHTML =
-              `<strong>${selectedMunicipio}</strong><br>Não há registros de ouvidoria.`;
+            municipioInfoDiv.innerHTML = `
+              <div class="info-header">
+                <h3>${selectedMunicipio}</h3>
+                <p id="not-found-text">Não há registros de ouvidoria cadastrados.</p>
+              </div>
+            `;
             return;
           }
 
-          let infoHTML = `<strong><h3>${selectedMunicipio}</h3></strong>`;
+          // Montagem do HTML de informações
+          let infoHTML = `<div class="info-header"><h3>${selectedMunicipio}</h3></div>`;
 
+          // Iteramos pelos entes (Prefeitura, Câmara, etc.)
           Object.keys(dadosMunicipio).forEach((ente) => {
-            // Como cada ente é uma lista, pegamos o primeiro registro [0]
-            const d = dadosMunicipio[ente][0];
+            const d = dadosMunicipio[ente][0]; // Pegamos o primeiro registro da lista do ente
 
-            infoHTML += `<div style="margin-bottom:10px; border-left: 4px solid #134383; padding-left:10px;">
-              <strong>🟦 ${ente}</strong><br>
-              ${d.ouvidor ? `Responsável: ${d.ouvidor}<br>` : ""}
-              ${d.email ? `Email: ${d.email}<br>` : ""}
-              ${d.telefone ? `Tel: ${d.telefone}<br>` : ""}
-              ${d.site ? `<a href="${d.site}" target="_blank">Acesse o Site</a>` : ""}
-              </div>`;
+            infoHTML += `
+        <div class="ente-card">
+          <div class="ente-title">🟦 ${ente.toUpperCase()}</div>
+          <div class="ente-body">
+            ${d.ouvidor ? `<strong>Responsável:</strong> ${d.ouvidor}<br>` : ""}
+            ${d.email ? `<strong>Email:</strong> <a href="mailto:${d.email}">${d.email}</a><br>` : ""}
+            ${d.telefone ? `<strong>Tel:</strong> ${d.telefone}<br>` : ""}
+            ${d.site ? `<a href="${d.site}" target="_blank" class="btn-site">Acessar Portal da Transparência</a>` : ""}
+          </div>
+        </div>`;
           });
 
-          document.getElementById("municipioInfo").innerHTML = infoHTML;
+          municipioInfoDiv.innerHTML = infoHTML;
+        } else {
+          console.error(
+            "Município não encontrado na base geográfica:",
+            nomeNormalizado,
+          );
         }
       }
 
       function clearSearch() {
         document.getElementById("municipioSelect").value = "";
         document.getElementById("municipioInfo").innerHTML = "";
-        if (selectedLayer) {
-          selectedLayer.setStyle({ fillColor: selectedLayerColor, weight: 1 });
+
+        if (selectedLayer && geojsonLayer) {
+          geojsonLayer.resetStyle(selectedLayer);
         }
+
+        selectedLayer = null;
+      }
+
+      // Função auxiliar para popular o select de forma performática
+      function popularSelect(features) {
+        const select = document.getElementById("municipioSelect");
+        if (!select) return;
+
+        const fragment = document.createDocumentFragment();
+
+        const nomesOrdenados = features
+          .map((f) => f.properties.name)
+          .sort((a, b) => a.localeCompare(b));
+
+        nomesOrdenados.forEach((nome) => {
+          let option = document.createElement("option");
+          option.value = nome;
+          option.textContent = nome;
+          fragment.appendChild(option);
+        });
+
+        select.innerHTML =
+          '<option value="">Selecione um município...</option>';
+        select.appendChild(fragment);
+      }
+
+      function normalizarTexto(texto) {
+        if (!texto) return "";
+        return texto
+          .toString()
+          .normalize("NFD") // Decompõe caracteres acentuados (ex: á -> a + ´)
+          .replace(/[\u0300-\u036f]/g, "") // Remove os acentos
+          .toUpperCase() // Tudo em maiúsculo
+          .trim(); // Remove espaços extras
       }
     </script>
   </body>
