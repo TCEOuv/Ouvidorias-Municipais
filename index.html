@@ -204,9 +204,16 @@
                     (key) => normalizarTexto(key) === "PREFEITURA",
                   );
 
-                  if (chavePrefeitura && dadosMunicipio[chavePrefeitura]) {
-                    // Verifica se a lista da prefeitura tem registros
-                    temOuvidoria = dadosMunicipio[chavePrefeitura].length > 0;
+                  if (
+                    chavePrefeitura &&
+                    dadosMunicipio[chavePrefeitura].length > 0
+                  ) {
+                    const registro = dadosMunicipio[chavePrefeitura][0];
+
+                    const evidencia =
+                      registro["evidencia de instrucao normativa"];
+
+                    temOuvidoria = evidencia === "Sim";
                   }
                 }
 
@@ -315,7 +322,9 @@
 
           // Iteramos pelos entes (Prefeitura, Câmara, etc.)
           Object.keys(dadosMunicipio).forEach((ente) => {
-            const d = dadosMunicipio[ente][0]; // Pegamos o primeiro registro da lista do ente
+            const d = dadosMunicipio[ente][0];
+
+            const temInstrucaoNormativa = d["evidencia de instrucao normativa"];
 
             infoHTML += `
         <div class="ente-card">
@@ -324,7 +333,9 @@
             ${d.ouvidor ? `<strong>Responsável:</strong> ${d.ouvidor}<br>` : ""}
             ${d.email ? `<strong>Email:</strong> <a href="mailto:${d.email}">${d.email}</a><br>` : ""}
             ${d.telefone ? `<strong>Tel:</strong> ${d.telefone}<br>` : ""}
-            ${d.site ? `<a href="${d.site}" target="_blank" class="btn-site">Acessar Portal da Transparência</a>` : ""}
+            ${d.site ? `<a href="${d.site}" target="_blank" class="btn-site">Acessar o site da Ouvidoria</a>` : ""}
+            ${d.telefone ? `<strong>Tel:</strong> ${d.telefone}<br>` : ""}
+            ${d["evidencia de instrucao normativa"] ? `<a href="${d["link da instrucao normativa"]}" target="_blank" class="btn-site">Acessar o link da Instrução Normativa</a>` : ""}
           </div>
         </div>`;
           });
