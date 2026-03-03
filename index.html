@@ -4,109 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="style.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        display: flex;
-        flex-direction: row;
-        height: 100vh;
-        margin: 0;
-        background-color: #f8f8f8;
-      }
-
-      #not-found-text {
-        color: tomato;
-      }
-
-      #sidebar {
-        width: 30%;
-        min-width: 250px;
-        max-width: 400px;
-        padding: 10px;
-        overflow-y: auto;
-        background: #f8f8f8;
-        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-        display: flex;
-        flex-direction: column;
-      }
-
-      #map {
-        flex: 1;
-        height: 100%;
-        background-color: #f8f8f8;
-      }
-
-      #searchPanel {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-      }
-
-      #municipioSelect {
-        flex: 1;
-        padding: 8px;
-        font-size: 1rem;
-      }
-
-      button {
-        padding: 8px 12px;
-        font-size: 1rem;
-        cursor: pointer;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 5px;
-      }
-
-      button:hover {
-        background-color: #0056b3;
-      }
-
-      #infoBox {
-        flex-grow: 1;
-        overflow-y: auto;
-        padding: 10px;
-      }
-
-      .ente-card {
-        margin-bottom: 15px;
-        border-left: 5px solid #134383;
-        background: #f9f9f9;
-        padding: 10px;
-        border-radius: 0 5px 5px 0;
-        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05);
-      }
-      .ente-title {
-        font-weight: bold;
-        color: #134383;
-        border-bottom: 1px solid #ddd;
-        margin-bottom: 8px;
-        padding-bottom: 3px;
-      }
-      .btn-site {
-        display: inline-block;
-        margin-top: 10px;
-        padding: 5px 10px;
-        background: #134383;
-        color: white;
-        text-decoration: none;
-        border-radius: 3px;
-        font-size: 0.85em;
-      }
-
-      .map-tooltip {
-        font-weight: bold;
-        background: white;
-        padding: 4px;
-        border-radius: 4px;
-        box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
-      }
-
-      .leaflet-interactive {
-        outline: none !important;
-      }
-    </style>
   </head>
   <body>
     <div id="sidebar">
@@ -170,11 +69,6 @@
                 }
 
                 csvData[municipio][ente].push(row);
-
-                console.log(
-                  `Municipio: ${municipio}, Ente: ${ente}, Dados:`,
-                  row,
-                );
               });
 
               loadMap();
@@ -327,21 +221,63 @@
           Object.keys(dadosMunicipio).forEach((ente) => {
             const d = dadosMunicipio[ente][0];
 
+            const contentRow = (label, value) =>
+              value
+                ? `<div class="content-row">
+                    <span class="content-row-label">${label}:</span>
+                    <span class="content-row-value">${value}</span>
+                  </div>`
+                : "";
+
+            // Itens do Conteúdo
+            const ouvidorItem = contentRow("Ouvidor(a)", d.ouvidor);
+
+            const emailItem = contentRow(
+              "E-mail",
+              d["e-mail"]
+                ? `<a href="mailto:${d["e-mail"]}">${d["e-mail"]}</a>`
+                : "",
+            );
+
+            const contatosItem = contentRow(
+              "Contato(s)",
+              `${d.telefone} ${d.telefone && d.whatsapp ? "|" : ""} ${d.whatsapp}`.trim(),
+            );
+
+            const enderecoItem = contentRow("Endereço", d["endereço"]);
+
+            const horarioItem = contentRow(
+              "Horário de funcionamento",
+              d["horario de funcionamento"],
+            );
+
+            // Botões do Conteúdo (Site e Instrução Normativa)
             const temInstrucaoNormativa =
-              d["evidencia de instrucao normativa"] &&
-              d["evidencia de instrucao normativa"].toLowerCase() === "sim";
+              d["evidencia de instrucao normativa"]?.toLowerCase() === "sim";
+
+            const instrucaoNormativaItem = temInstrucaoNormativa
+              ? `<a href="${d["link da instrucao normativa"]}" target="_blank" class="btn-action btn-norma">Acessar a Instrução Normativa</a>`
+              : "";
+
+            const siteItem = d.site
+              ? `<a href="${d.site}" target="_blank" class="btn-action">Acessar o site da Ouvidoria</a>`
+              : "";
 
             infoHTML += `
-        <div class="ente-card">
-          <div class="ente-title">🟦 ${ente.toUpperCase()}</div>
-          <div class="ente-body">
-            ${d.ouvidor ? `<strong>Responsável:</strong> ${d.ouvidor}<br>` : ""}
-            ${d.email ? `<strong>Email:</strong> <a href="mailto:${d.email}">${d.email}</a><br>` : ""}
-            ${d.telefone ? `<strong>Tel:</strong> ${d.telefone}<br>` : ""}
-            ${d.site ? `<a href="${d.site}" target="_blank" class="btn-site">Acessar o site da Ouvidoria</a>` : ""}
-            ${temInstrucaoNormativa ? `<a href="${d["link da instrucao normativa"]}" target="_blank" class="btn-site">Acessar o link da Instrução Normativa</a>` : ""}
-          </div>
-        </div>`;
+            <div class="card">
+              <div class="card-header">${ente.toUpperCase()}</div>
+              <div class="card-body">
+                ${ouvidorItem}
+                ${emailItem}
+                ${contatosItem}
+                ${enderecoItem}
+                ${horarioItem}
+                <div class="card-actions">
+                  ${siteItem}
+                  ${instrucaoNormativaItem}
+                </div>
+              </div>
+            </div>`;
           });
 
           municipioInfoDiv.innerHTML = infoHTML;
