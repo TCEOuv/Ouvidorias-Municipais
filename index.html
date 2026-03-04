@@ -8,20 +8,22 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
   </head>
   <body>
-    <div id="sidebar">
-      <div id="searchPanel">
-        <select id="municipioSelect" onchange="searchMunicipio(this.value)">
-          <option value="">Selecione um município...</option>
-        </select>
-        <button onclick="clearSearch()">Limpar</button>
+    <div id="main-container">
+      <div id="sidebar">
+        <div id="searchPanel">
+          <select id="municipioSelect" onchange="searchMunicipio(this.value)">
+            <option value="">Selecione um município...</option>
+          </select>
+          <button onclick="clearSearch()">Limpar</button>
+        </div>
+        <div id="infoBox">
+          <h2>Informações do Município</h2>
+          <div id="municipioInfo"></div>
+        </div>
       </div>
-      <div id="infoBox">
-        <h2>Informações do Município</h2>
-        <div id="municipioInfo"></div>
-      </div>
-    </div>
 
-    <div id="map"></div>
+      <div id="map"></div>
+    </div>
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
@@ -37,6 +39,10 @@
         maxZoom: 8,
         zoomControl: false,
         dragging: false,
+        doubleClickZoom: false,
+        scrollWheelZoom: false,
+        boxZoom: false,
+        keyboard: false,
       };
 
       let map = L.map("map", MAP_SETTINGS);
@@ -166,6 +172,10 @@
 
             // 3. Ajuste de enquadramento (Faz o mapa focar no Ceará)
             map.fitBounds(geojsonLayer.getBounds());
+
+            setTimeout(() => {
+              map.invalidateSize();
+            }, 200);
           })
           .catch((err) => console.error("Erro ao carregar GeoJSON:", err));
       }
@@ -332,6 +342,12 @@
           .toUpperCase() // Tudo em maiúsculo
           .trim(); // Remove espaços extras
       }
+
+      window.addEventListener("resize", () => {
+        if (map) {
+          map.invalidateSize();
+        }
+      });
     </script>
   </body>
 </html>
