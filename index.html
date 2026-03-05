@@ -2,10 +2,7 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="style.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
@@ -86,9 +83,7 @@
         });
 
       function loadMap() {
-        fetch(
-          "https://raw.githubusercontent.com/TCEOuv/Ouvidorias-Municipais/main/geojson-municipios-ceara.json",
-        )
+        fetch("./geojson-municipios-ceara.json")
           .then((response) => response.json())
           .then((data) => {
             // 1. Criamos a camada GeoJSON
@@ -271,11 +266,11 @@
               d["evidencia de instrucao normativa"]?.toLowerCase() === "sim";
 
             const instrucaoNormativaItem = temInstrucaoNormativa
-              ? `<a href="${d["link da instrucao normativa"]}" target="_blank" class="btn-action btn-norma">Acessar a Norma Instituidora</a>`
+              ? `<a href="${d["link da instrucao normativa"]}" target="_blank" class="btn-action btn-norma">Acesse o intrumento normativo de criação da Ouvidoria</a>`
               : "";
 
             const siteItem = d.site
-              ? `<a href="${d.site}" target="_blank" class="btn-action">Acessar o site da Ouvidoria</a>`
+              ? `<a href="${d.site}" target="_blank" class="btn-action">Acesse a página eletrônica da Ouvidoria</a>`
               : "";
 
             infoHTML += `
