@@ -46,6 +46,7 @@
       };
 
       let map = L.map("map", MAP_SETTINGS);
+      let mapLegend = L.control({ position: "bottomleft" });
       let geojsonLayer = null;
       let municipiosData = []; // Municipio no Mapa
       let csvData = {}; //Dados do CSV de cada município
@@ -78,6 +79,8 @@
               });
 
               loadMap();
+
+              addLegend(map);
             },
           });
         });
@@ -178,6 +181,32 @@
             }, 500);
           })
           .catch((err) => console.error("Erro ao carregar GeoJSON:", err));
+      }
+
+      function addLegend(map) {
+        mapLegend.onAdd = function (map) {
+          const div = L.DomUtil.create("div", "legend");
+
+          div.innerHTML = `
+            <div class="map-legend">
+              <div class="legend-title">Legenda</div>
+              
+              <div class="legend-item">
+                <span class="color-box azul"></span>
+                <span class="legend-text">Município com ouvidoria pública no âmbito do Poder Executivo</span>
+              </div>
+              
+              <div class="legend-item">
+                <span class="color-box cinza"></span>
+                <span class="legend-text">Município sem divulgação do instrumento normativo no âmbito do Poder Executivo</span>
+              </div>
+            </div>
+          `;
+
+          return div;
+        };
+
+        mapLegend.addTo(map);
       }
 
       function searchMunicipio(selectedMunicipio) {

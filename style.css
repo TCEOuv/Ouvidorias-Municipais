@@ -1,19 +1,20 @@
-body,
-html {
-  font-family: Arial, sans-serif;
-  background-color: #f8f8f8;
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  width: 100%;
-  overflow: hidden;
-}
-
 :root {
   --primary-color: #134383;
   --secondary-color: #f8f8f8;
   --accent-color: #007bff;
   --text-color: #333;
+  --bg-color: #f8f8f8;
+}
+
+body,
+html {
+  font-family: Arial, sans-serif;
+  background-color: var(--bg-color);
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
 }
 
 #main-container {
@@ -32,7 +33,7 @@ html {
   max-width: 400px;
   padding: 10px;
   overflow-y: auto;
-  background: #f8f8f8;
+  background: var(--bg-color);
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
@@ -42,7 +43,7 @@ html {
 #map {
   flex: 1;
   height: 100%;
-  background-color: #f8f8f8;
+  background-color: var(--bg-color);
 }
 
 #searchPanel {
@@ -159,4 +160,53 @@ button:hover {
 
 .leaflet-interactive {
   outline: none !important;
+}
+
+.map-legend {
+  margin: 15px 0 20px 0;
+  padding: 12px;
+  max-width: 15vw;
+}
+
+.legend-title {
+  font-weight: bold;
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+  color: var(--primary-color);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.legend-item:last-child {
+  margin-bottom: 0;
+}
+
+.color-box {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Cores fiéis ao Mapa */
+.color-box.azul {
+  background-color: #134383;
+}
+
+.color-box.cinza {
+  background-color: #d3d3d3;
+}
+
+.legend-text {
+  font-size: 0.8rem;
+  color: #444;
+  line-height: 1.2;
 }
