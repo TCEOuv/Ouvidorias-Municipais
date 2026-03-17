@@ -1,84 +1,107 @@
+/* 1 VARIÁVEIS */
 :root {
   --primary-color: #134383;
-  --secondary-color: #f8f8f8;
-  --accent-color: #007bff;
-  --text-color: #333;
+  --primary-hover: #0d3263;
+  --secondary-color: #ffffff;
+  --accent-color: #28a745;
   --bg-color: #f8f8f8;
+  --text-color: #333;
+  --text-muted: #555;
+  --border-color: #eeeeee;
+  --shadow-sm: 0 2px 4 px rgba(0, 0, 0, 0.08);
+  --shadow-md: 2px 0 5px rgba(0, 0, 0, 0.1);
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --transition: all 0.2s ease-in-out;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body,
 html {
-  font-family: Arial, sans-serif;
-  background-color: var(--bg-color);
+  font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   margin: 0;
   padding: 0;
   height: 100%;
-  width: 100%;
+  background-color: var(--bg-color);
+  color: var(--text-color);
   overflow: hidden;
 }
+
+/* 2 LAYOUT  */
 
 #main-container {
   display: flex;
-  flex-direction: row;
   height: 100vh;
   width: 100vw;
-  overflow: hidden;
-}
-
-#not-found-text {
-  color: tomato;
 }
 
 #sidebar {
   width: 350px;
   height: 100%;
-  padding: 10px;
+  padding: 1rem;
   overflow-y: auto;
   background: var(--bg-color);
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
   display: flex;
   flex-direction: column;
   z-index: 1000;
 }
 
-#map {
+#map-view {
   flex: 1;
   height: 100%;
   background-color: var(--bg-color);
 }
 
-#searchPanel {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+/* 3 COMPONENTES */
+
+#not-found-text {
+  color: tomato;
 }
 
-#municipioSelect {
-  flex: 1;
-  padding: 8px;
-  font-size: 1rem;
-}
-
-button {
+/* Buttons */
+.btn {
   padding: 8px 12px;
   font-size: 1rem;
   cursor: pointer;
-  background-color: #007bff;
-  color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  text-decoration: none;
 }
 
-button:hover {
-  background-color: #0056b3;
+.btn-primary {
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
 }
 
-#infoBox {
-  flex-grow: 1;
-  overflow-y: auto;
-  padding: 10px;
+.btn-primary:hover {
+  filter: brightness(1.2);
 }
 
+/* Links */
+.link {
+  flex: 1; /* Botões dividem o espaço lateral */
+  min-width: 120px;
+  font-size: 0.75rem;
+}
+
+.link-ouvidoria {
+  background: var(--primary-color); /* Azul para diferenciar do site */
+}
+
+.link-norma {
+  background: var(--accent-color); /* Verde para diferenciar do site */
+}
+
+/* Cards */
 .card {
   margin-bottom: 12px;
   border-radius: 6px;
@@ -102,7 +125,8 @@ button:hover {
   padding: 8px 10px;
 }
 
-.content-row {
+/* Info Rows */
+.info-row {
   display: flex;
   justify-content: flex-start;
   align-items: flex-start; /* Alinha no topo se o texto quebrar */
@@ -111,56 +135,25 @@ button:hover {
   line-height: 1.2;
 }
 
-.content-row-label {
+.info-row-label {
   font-weight: 700;
   color: #555;
   min-width: 85px; /* Alinha os valores verticalmente */
   margin-right: 5px;
 }
 
-.content-row-value {
+.info-row-value {
   color: #333;
   word-break: break-word; /* Evita que o texto saia do card */
 }
 
-.card-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 10px;
-}
-
-.btn-action {
-  flex: 1; /* Botões dividem o espaço lateral */
-  min-width: 120px;
-  padding: 5px 8px;
-  background: var(--primary-color);
-  color: white !important;
-  text-decoration: none;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  text-align: center;
-  transition: filter 0.2s;
-}
-
-.btn-norma {
-  background: #28a745; /* Verde para diferenciar do site */
-}
-
-.btn-action:hover {
-  filter: brightness(1.2);
-}
-
+/* Map Legend */
 .map-tooltip {
   font-weight: bold;
   background: white;
   padding: 4px;
   border-radius: 4px;
   box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
-}
-
-.leaflet-interactive {
-  outline: none !important;
 }
 
 .map-legend {
@@ -199,7 +192,6 @@ button:hover {
   border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-/* Cores fiéis ao Mapa */
 .color-box.azul {
   background-color: #134383;
 }
@@ -214,6 +206,28 @@ button:hover {
   line-height: 1.2;
 }
 
+/* Search */
+#municipio-select {
+  flex: 1;
+  padding: 8px;
+  font-size: 1rem;
+  border-radius: var(--radius-sm);
+}
+
+.search-box {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+/* KPI */
 .kpi-box {
   background-color: var(--bg-color);
   padding: 12px;
@@ -241,6 +255,24 @@ button:hover {
   border-top: 1px solid rgba(255, 255, 255, 0.2);
   padding-top: 8px;
 }
+
+/* 4 UTILITIES */
+
+.u-text-danger {
+  color: tomato;
+}
+
+.u-flex-grow {
+  flex-grow: 1;
+}
+
+/* 6 ACESSIBILIDADE */
+
+.leaflet-interactive {
+  outline: none !important;
+}
+
+/* 5 RESPONSIVIDADE */
 
 @media (max-width: 768px) {
   #main-container {
