@@ -10,6 +10,8 @@
   <body>
     <div id="main-container">
       <div id="sidebar">
+        <div id="kpiInfo"></div>
+        <div id="map-legend"></div>
         <div id="searchPanel">
           <select id="municipioSelect" onchange="searchMunicipio(this.value)">
             <option value="">Selecione um município...</option>
@@ -34,19 +36,13 @@
 
       const MAP_SETTINGS = {
         center: [-5.3, -39.5],
-        zoom: 8,
-        minZoom: 8,
-        maxZoom: 8,
         zoomControl: false,
-        dragging: false,
-        doubleClickZoom: false,
-        scrollWheelZoom: false,
-        boxZoom: false,
-        keyboard: false,
+        maxZoom: 9,
       };
 
       let map = L.map("map", MAP_SETTINGS);
       let mapLegend = L.control({ position: "bottomleft" });
+      let kpiLegend = L.control({ position: "topright" });
       let geojsonLayer = null;
       let municipiosData = []; // Municipio no Mapa
       let csvData = {}; //Dados do CSV de cada município
@@ -81,6 +77,8 @@
               loadMap();
 
               addLegend(map);
+
+              addKpi(map, csvData);
             },
           });
         });
@@ -176,9 +174,7 @@
               padding: [20, 20],
             });
 
-            setTimeout(() => {
-              map.invalidateSize();
-            }, 500);
+            ajustarLayout();
           })
           .catch((err) => console.error("Erro ao carregar GeoJSON:", err));
       }
@@ -207,6 +203,30 @@
         };
 
         mapLegend.addTo(map);
+      }
+
+      function addKpi(map, baseConsolidada) {
+        kpiLegend.onAdd = function (map) {
+          const div = L.DomUtil.create("div", "info");
+
+          const { total, porcentagem } = calcularCobertura(baseConsolidada);
+
+          div.innerHTML = `
+            <div class="kpi-box">
+              <div class="kpi-main">
+                <span class="kpi-percent">${porcentagem}%</span>
+                <span class="kpi-label">Municípios com ouvidoria instituída</span>
+              </div>
+              <div class="kpi-footer">
+                <strong>${total}</strong> de 184 munícipios do Ceará
+              </div>
+            </div>
+          `;
+
+          return div;
+        };
+
+        kpiLegend.addTo(map);
       }
 
       function searchMunicipio(selectedMunicipio) {
@@ -362,6 +382,55 @@
         select.appendChild(fragment);
       }
 
+      function renderizarKPI(baseConsolidada) {
+        const kpiContainer = document.getElementById("kpiInfo");
+
+        if (!kpiContainer) return;
+
+        const { total, porcentagem } = calcularCobertura(baseConsolidada);
+
+        kpiContainer.innerHTML = `
+          <div class="kpi-box">
+            <div class="kpi-main">
+              <span class="kpi-percent">${porcentagem}%</span>
+              <span class="kpi-label">Municípios com ouvidoria instituída</span>
+            </div>
+            <div class="kpi-footer">
+              <strong>${total}</strong> de 184 munícipios do Ceará
+            </div>
+          </div>
+        `;
+      }
+
+      function calcularCobertura(baseConsolidada) {
+        const TOTAL_MUNICIPIOS = 184; // Total fixo para o estado do Ceará
+        let contadorPrefeiturasComNorma = 0;
+
+        // Percorre as chaves do objeto consolidado
+        for (const chave in baseConsolidada) {
+          const entesNoMunicipio = baseConsolidada[chave];
+
+          if (entesNoMunicipio["PREFEITURA"]) {
+            const dadosPrefeitura = entesNoMunicipio["PREFEITURA"][0];
+            const evidencia =
+              dadosPrefeitura["evidencia de instrucao normativa"];
+
+            if (evidencia && evidencia.toLowerCase() === "sim") {
+              contadorPrefeiturasComNorma++;
+            }
+          }
+        }
+
+        // Cálculo da porcentagem
+        const porcentagem =
+          (contadorPrefeiturasComNorma / TOTAL_MUNICIPIOS) * 100;
+
+        return {
+          total: contadorPrefeiturasComNorma,
+          porcentagem: porcentagem.toFixed(1), // Retorna com uma casa decimal (ex: "45.5")
+        };
+      }
+
       function normalizarTexto(texto) {
         if (!texto) return "";
         return texto
@@ -372,10 +441,26 @@
           .trim(); // Remove espaços extras
       }
 
-      window.addEventListener("resize", () => {
-        if (map) {
-          map.invalidateSize();
+      function ajustarLayout() {
+        if (!map) return;
+
+        // 1. Avisa o Leaflet que o tamanho do div mudou
+        map.invalidateSize({ animate: true });
+
+        // 2. Re-enquadra o GeoJSON com um pequeno atraso para o CSS estabilizar
+        if (geojsonLayer) {
+          setTimeout(() => {
+            map.fitBounds(geojsonLayer.getBounds(), {
+              padding: window.innerWidth < 768 ? [10, 10] : [30, 30],
+            });
+          }, 300);
         }
+      }
+
+      window.addEventListener("resize", () => {
+        // Debounce simples para não sobrecarregar o processador
+        clearTimeout(window.resizeTimer);
+        window.resizeTimer = setTimeout(ajustarLayout, 250);
       });
     </script>
   </body>

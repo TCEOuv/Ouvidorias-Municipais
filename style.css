@@ -19,8 +19,10 @@ html {
 
 #main-container {
   display: flex;
+  flex-direction: row;
   height: 100vh;
   width: 100vw;
+  overflow: hidden;
 }
 
 #not-found-text {
@@ -28,9 +30,8 @@ html {
 }
 
 #sidebar {
-  width: 30%;
-  min-width: 250px;
-  max-width: 400px;
+  width: 350px;
+  height: 100%;
   padding: 10px;
   overflow-y: auto;
   background: var(--bg-color);
@@ -166,6 +167,8 @@ button:hover {
   margin: 15px 0 20px 0;
   padding: 12px;
   max-width: 15vw;
+  background: var(--bg-color);
+  border-radius: 10px;
 }
 
 .legend-title {
@@ -209,4 +212,70 @@ button:hover {
   font-size: 0.8rem;
   color: #444;
   line-height: 1.2;
+}
+
+.kpi-box {
+  background-color: var(--bg-color);
+  padding: 12px;
+  border-radius: 10px;
+}
+
+.kpi-percent {
+  display: block;
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--primary-color);
+}
+
+.kpi-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.9;
+}
+
+.kpi-footer {
+  margin-top: 10px;
+  font-size: 0.8rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding-top: 8px;
+}
+
+@media (max-width: 768px) {
+  #main-container {
+    flex-direction: column; /* Celular: Um em cima do outro */
+  }
+
+  #sidebar {
+    width: 100% !important;
+    max-width: none !important;
+    height: 60vh; /* Divide a tela ao meio ou ajuste conforme o gosto */
+    order: 2; /* Sidebar vai para baixo */
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* Sombra no topo */
+  }
+
+  #map {
+    width: 100%;
+    height: 40vh; /* Mapa ocupa a metade superior */
+    order: 1; /* Mapa vai para cima */
+  }
+
+  /* Ajuste das Legendas: Se elas estiverem no mapa, ocupam muito espaço no mobile */
+  .map-legend {
+    max-width: 90% !important; /* No mobile, permite que ela seja larga */
+    font-size: 0.7rem;
+    margin: 10px auto;
+  }
+
+  .leaflet-control-container .kpi-box,
+  .leaflet-control-container .map-legend {
+    display: none !important;
+  }
+
+  /* Garante que a legenda dentro da sidebar apareça bem */
+  #sidebar .map-legend {
+    display: block;
+    max-width: 100%;
+  }
 }
