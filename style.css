@@ -47,6 +47,7 @@ html {
   box-shadow: var(--shadow-md);
   display: flex;
   flex-direction: column;
+  gap: 1rem;
   z-index: 1000;
 }
 
@@ -123,6 +124,27 @@ html {
 
 .card-body {
   padding: 8px 10px;
+}
+
+.card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+/* Sections */
+.sect {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sect-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--primary-color);
 }
 
 /* Info Rows */
@@ -220,18 +242,11 @@ html {
   gap: 10px;
 }
 
-.card-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 10px;
-}
-
 /* KPI */
-.kpi-box {
-  background-color: var(--bg-color);
-  padding: 12px;
-  border-radius: 10px;
+.kpi-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .kpi-percent {
@@ -253,7 +268,7 @@ html {
   margin-top: 10px;
   font-size: 0.8rem;
   border-top: 1px solid rgba(255, 255, 255, 0.2);
-  padding-top: 8px;
+  padding-top: 18px;
 }
 
 /* 4 UTILITIES */
@@ -264,6 +279,14 @@ html {
 
 .u-flex-grow {
   flex-grow: 1;
+}
+
+.u-flex-grow-2 {
+  flex-grow: 2;
+}
+
+.u-border-top-light {
+  border-top: 1px solid var(--border-color);
 }
 
 /* 6 ACESSIBILIDADE */

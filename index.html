@@ -10,19 +10,26 @@
   <body>
     <div id="main-container">
       <div id="sidebar">
-        <div id="kpi-info"></div>
-        <div id="map-legend"></div>
-        <div class="search-box">
-          <select id="municipio-select" onchange="searchMunicipio(this.value)">
-            <option value="">Selecione um município...</option>
-          </select>
-          <button class="btn btn-primary" onclick="clearSearch()">
-            Limpar
-          </button>
+        <div class="sect u-flex-grow-2">
+          <h2 class="sect-title">Busca por Município</h2>
+          <div class="search-box">
+            <select
+              id="municipio-select"
+              onchange="searchMunicipio(this.value)"
+            >
+              <option value="">Selecione um município...</option>
+            </select>
+            <button class="btn btn-primary" onclick="clearSearch()">
+              Limpar
+            </button>
+          </div>
+          <div class="info-box">
+            <div id="municipio-info"></div>
+          </div>
         </div>
-        <div class="info-box">
-          <h2>Informações do Município</h2>
-          <div id="municipio-info"></div>
+        <div class="sect u-border-top-light u-flex-grow">
+          <h2 class="sect-title">Indicador de Cobertura</h2>
+          <div id="kpi-info"></div>
         </div>
       </div>
 
@@ -44,7 +51,6 @@
 
       let map = L.map("map-view", MAP_SETTINGS);
       let mapLegend = L.control({ position: "bottomleft" });
-      let kpiLegend = L.control({ position: "topright" });
       let geojsonLayer = null;
       let municipiosData = []; // Municipio no Mapa
       let csvData = {}; //Dados do CSV de cada município
@@ -76,11 +82,11 @@
                 csvData[municipio][ente].push(row);
               });
 
+              addKpi(csvData);
+
               loadMap();
 
               addLegend(map);
-
-              addKpi(map, csvData);
             },
           });
         });
@@ -205,30 +211,6 @@
         };
 
         mapLegend.addTo(map);
-      }
-
-      function addKpi(map, baseConsolidada) {
-        kpiLegend.onAdd = function (map) {
-          const div = L.DomUtil.create("div", "info");
-
-          const { total, porcentagem } = calcularCobertura(baseConsolidada);
-
-          div.innerHTML = `
-            <div class="kpi-box">
-              <div class="kpi-main">
-                <span class="kpi-percent">${porcentagem}%</span>
-                <span class="kpi-label">Municípios com ouvidoria instituída</span>
-              </div>
-              <div class="kpi-footer">
-                <strong>${total}</strong> de 184 munícipios do Ceará
-              </div>
-            </div>
-          `;
-
-          return div;
-        };
-
-        kpiLegend.addTo(map);
       }
 
       function searchMunicipio(selectedMunicipio) {
@@ -384,29 +366,37 @@
         select.appendChild(fragment);
       }
 
-      function renderizarKPI(baseConsolidada) {
-        const kpiContainer = document.getElementById("kpi-info");
+      function addKpi(baseConsolidada) {
+        const kpiInfoDiv = document.getElementById("kpi-info");
 
-        if (!kpiContainer) return;
+        if (!kpiInfoDiv) return;
 
-        const { total, porcentagem } = calcularCobertura(baseConsolidada);
+        const { total, porcentagemComNorma, porcentagemSemNorma } =
+          calcularCobertura(baseConsolidada);
 
-        kpiContainer.innerHTML = `
-          <div class="kpi-box">
+        let infoHTML = `
             <div class="kpi-main">
-              <span class="kpi-percent">${porcentagem}%</span>
-              <span class="kpi-label">Municípios com ouvidoria instituída</span>
+              <div class="kpi-section">
+                <span class="kpi-percent">${porcentagemComNorma}%</span>
+                <span class="kpi-label">Municípios com ouvidoria instituída</span>
+              </div>
+              <div class="kpi-section">
+                <span class="kpi-percent">${porcentagemSemNorma}%</span>
+                <span class="kpi-label">Municípios sem ouvidoria instituída</span>
+              </div>
             </div>
             <div class="kpi-footer">
               <strong>${total}</strong> de 184 munícipios do Ceará
             </div>
-          </div>
-        `;
+          `;
+
+        kpiInfoDiv.innerHTML = infoHTML;
       }
 
       function calcularCobertura(baseConsolidada) {
         const TOTAL_MUNICIPIOS = 184; // Total fixo para o estado do Ceará
         let contadorPrefeiturasComNorma = 0;
+        let contadorPrefeiturasSemNorma = 0;
 
         // Percorre as chaves do objeto consolidado
         for (const chave in baseConsolidada) {
@@ -419,17 +409,23 @@
 
             if (evidencia && evidencia.toLowerCase() === "sim") {
               contadorPrefeiturasComNorma++;
+            } else {
+              contadorPrefeiturasSemNorma++;
             }
           }
         }
 
         // Cálculo da porcentagem
-        const porcentagem =
+        const porcentagemComNorma =
           (contadorPrefeiturasComNorma / TOTAL_MUNICIPIOS) * 100;
+
+        const porcentagemSemNorma =
+          (contadorPrefeiturasSemNorma / TOTAL_MUNICIPIOS) * 100;
 
         return {
           total: contadorPrefeiturasComNorma,
-          porcentagem: porcentagem.toFixed(1), // Retorna com uma casa decimal (ex: "45.5")
+          porcentagemComNorma: porcentagemComNorma.toFixed(1),
+          porcentagemSemNorma: porcentagemSemNorma.toFixed(1),
         };
       }
 
