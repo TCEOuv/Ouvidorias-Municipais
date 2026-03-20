@@ -181,14 +181,14 @@ html {
 .map-legend {
   margin: 15px 0 20px 0;
   padding: 12px;
-  max-width: 15vw;
+  max-width: 25vw;
   background: var(--bg-color);
   border-radius: 10px;
 }
 
 .legend-title {
   font-weight: bold;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   margin-bottom: 10px;
   color: var(--primary-color);
   text-transform: uppercase;
@@ -223,7 +223,7 @@ html {
 }
 
 .legend-text {
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   color: #444;
   line-height: 1.2;
 }
