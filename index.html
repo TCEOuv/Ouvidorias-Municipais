@@ -8,32 +8,34 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
   </head>
   <body>
-    <div id="main-container">
-      <div id="sidebar">
-        <div class="sect u-flex-grow-2">
-          <h2 class="sect-title">Busca por Município</h2>
-          <div class="search-box">
-            <select
-              id="municipio-select"
-              onchange="searchMunicipio(this.value)"
-            >
-              <option value="">Selecione um município...</option>
-            </select>
-            <button class="btn btn-primary" onclick="clearSearch()">
-              Limpar
-            </button>
-          </div>
-          <div class="info-box">
-            <div id="municipio-info"></div>
-          </div>
-        </div>
-        <div class="sect u-border-top-light u-flex-grow">
-          <h2 class="sect-title">Indicador de Cobertura</h2>
-          <div id="kpi-info"></div>
-        </div>
-      </div>
+    <div id="app-layout">
+      <header class="app-header">
+        <section class="card-kpi">
+          <h2 class="card-title">Indicador de Cobertura</h2>
+          <div id="kpi-info" class="card-content"></div>
+        </section>
+      </header>
 
-      <div id="map-view"></div>
+      <main class="app-content">
+        <div id="map-view"></div>
+
+        <aside id="sidebar" class="sidebar">
+          <section class="card-panel">
+            <h2 class="card-title">Busca por Município</h2>
+            <div class="card-content">
+              <div class="search-group">
+                <select id="municipio-select" class="search-select">
+                  <option value="">Selecione um município...</option>
+                </select>
+                <button class="btn btn-primary" onclick="clearSearch()">
+                  Limpar
+                </button>
+              </div>
+              <div id="municipio-info" class="info-display"></div>
+            </div>
+          </section>
+        </aside>
+      </main>
     </div>
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -45,7 +47,7 @@
 
       const MAP_SETTINGS = {
         center: [-5.3, -39.5],
-        zoomControl: false,
+        zoomControl: true,
         maxZoom: 9,
       };
 
@@ -197,12 +199,12 @@
 
               <div class="legend-item">
                 <span class="color-box azul"></span>
-                <span class="legend-text">Município com ouvidoria pública no âmbito do Poder Executivo</span>
+                <span class="legend-text">Com ouvidoria</span>
               </div>
 
               <div class="legend-item">
                 <span class="color-box cinza"></span>
-                <span class="legend-text">Município sem divulgação do instrumento normativo no âmbito do Poder Executivo</span>
+                <span class="legend-text">Sem ouvidoria</span>
               </div>
             </div>
           `;
