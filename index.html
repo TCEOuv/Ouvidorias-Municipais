@@ -5,13 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="style.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "@material/web/": "https://esm.run/@material/web/"
+        }
+      }
+    </script>
+    <script type="module">
+      import "@material/web/all.js";
+    </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
   </head>
   <body>
     <div id="app-layout">
       <header class="app-header">
         <section class="card-kpi">
-          <h2 class="card-title">Indicador de Cobertura</h2>
           <div id="kpi-info" class="card-content"></div>
         </section>
       </header>
@@ -21,15 +30,24 @@
 
         <aside id="sidebar" class="sidebar">
           <section class="card-panel">
-            <h2 class="card-title">Busca por Município</h2>
+            <h2 class="card-title">Buscar por Município</h2>
             <div class="card-content">
               <div class="search-group">
-                <select id="municipio-select" class="search-select">
-                  <option value="">Selecione um município...</option>
-                </select>
-                <button class="btn btn-primary" onclick="clearSearch()">
+                <md-outlined-select
+                  id="municipio-select"
+                  class="search-select"
+                  onchange="searchMunicipio(this.value)"
+                >
+                  <md-select-option aria-label="blank"></md-select-option>
+                  <md-select-option selected value=""
+                    ><div slot="headline">
+                      Selecione um município...
+                    </div></md-select-option
+                  >
+                </md-outlined-select>
+                <md-outlined-button onclick="clearSearch()">
                   Limpar
-                </button>
+                </md-outlined-button>
               </div>
               <div id="municipio-info" class="info-display"></div>
             </div>
@@ -47,12 +65,18 @@
 
       const MAP_SETTINGS = {
         center: [-5.3, -39.5],
-        zoomControl: true,
+        minZoom: 7,
         maxZoom: 9,
+        boxZoom: false,
+        doubleClickZoom: false,
+        keyboard: false,
+        scrollWheelZoom: false,
+        touchZoom: false,
+        attributionControl: false,
       };
 
       let map = L.map("map-view", MAP_SETTINGS);
-      let mapLegend = L.control({ position: "topright" });
+      let mapLegend = L.control({ position: "bottomright" });
       let geojsonLayer = null;
       let municipiosData = []; // Municipio no Mapa
       let csvData = {}; //Dados do CSV de cada município
@@ -301,11 +325,11 @@
               d["evidencia de instrucao normativa"]?.toLowerCase() === "sim";
 
             const instrucaoNormativaItem = temInstrucaoNormativa
-              ? `<a href="${d["link da instrucao normativa"]}" target="_blank" class="btn btn-primary link link-norma">Acesse o intrumento normativo de criação da Ouvidoria</a>`
+              ? `<md-filled-button href="${d["link da instrucao normativa"]}" target="_blank" class="link link-norma">Acesse o intrumento normativo de criação da Ouvidoria</md-filled-button>`
               : "";
 
             const siteItem = d.site
-              ? `<a href="${d.site}" target="_blank" class="btn btn-primary link link-ouvidoria">Acesse a página eletrônica da Ouvidoria</a>`
+              ? `<md-filled-button href="${d.site}" target="_blank" class="link link-ouvidoria">Acesse a página eletrônica da Ouvidoria</md-filled-button>`
               : "";
 
             infoHTML += `
@@ -334,6 +358,7 @@
         }
       }
 
+      // Função para limpar a busca e resetar o mapa
       function clearSearch() {
         document.getElementById("municipio-select").value = "";
         document.getElementById("municipio-info").innerHTML = "";
@@ -345,27 +370,25 @@
         selectedLayer = null;
       }
 
-      // Função auxiliar para popular o select de forma performática
+      // Função auxiliar para popular o SELECT em ordem alfabética
       function popularSelect(features) {
         const select = document.getElementById("municipio-select");
         if (!select) return;
 
-        const fragment = document.createDocumentFragment();
-
-        const nomesOrdenados = features
-          .map((f) => f.properties.name)
-          .sort((a, b) => a.localeCompare(b));
-
-        nomesOrdenados.forEach((nome) => {
-          let option = document.createElement("option");
-          option.value = nome;
-          option.textContent = nome;
-          fragment.appendChild(option);
-        });
-
+        // Limpa tudo, exceto o placeholder
         select.innerHTML =
-          '<option value="">Selecione um município...</option>';
-        select.appendChild(fragment);
+          '<md-select-option selected value=""><div slot="headline">Selecione um município...</div></md-select-option>';
+
+        features.forEach((f) => {
+          const nome = f.properties.name;
+          const option = document.createElement("md-select-option");
+          option.value = nome;
+
+          // No Material 3, o texto vai dentro de um slot chamado "headline"
+          option.innerHTML = `<div slot="headline">${nome}</div>`;
+
+          select.appendChild(option);
+        });
       }
 
       function addKpi(baseConsolidada) {
@@ -381,14 +404,14 @@
               <div class="kpi-section">
                 <span class="kpi-percent">${porcentagemComNorma}%</span>
                 <span class="kpi-label">Municípios com ouvidoria instituída</span>
+                <div class="kpi-footer">
+                  (<strong>${total}</strong> de 184 munícipios do Ceará)
+                </div>
               </div>
               <div class="kpi-section">
                 <span class="kpi-percent">${porcentagemSemNorma}%</span>
                 <span class="kpi-label">Municípios sem ouvidoria instituída</span>
               </div>
-            </div>
-            <div class="kpi-footer">
-              <strong>${total}</strong> de 184 munícipios do Ceará
             </div>
           `;
 

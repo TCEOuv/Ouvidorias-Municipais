@@ -1,70 +1,118 @@
 /* 1 VARIÁVEIS */
 :root {
+  /* --- Família de Fontes da Aplicação --- */
+  --font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+  /* --- Escala de Tipografia --- */
+  /* Body (Usado em Selects, Inputs e textos longos) */
+  --md-sys-typescale-body-large-font: var(--font-family);
+  --md-sys-typescale-body-medium-font: var(--font-family);
+  --md-sys-typescale-body-small-font: var(--font-family);
+
+  /* Label (Usado em Botões e rótulos de campos) */
+  --md-sys-typescale-label-large-font: var(--font-family);
+  --md-sys-typescale-label-medium-font: var(--font-family);
+  --md-sys-typescale-label-small-font: var(--font-family);
+
+  /* Headline/Title (Usado em Diálogos e menus) */
+  --md-sys-typescale-title-large-font: var(--font-family);
+  --md-sys-typescale-headline-small-font: var(--font-family);
+
+  /* Altura */
+  --md-sys-typescale-body-large-line-height: 1rem;
+
+  /* --- Cores Base (Sua Identidade) --- */
   --primary-color: #134383;
   --primary-hover: #0d3263;
-  --secondary-color: #ffffff;
+  --secondary-color: #82b0ed;
+  --terciary-color: #a7a7a7;
   --accent-color: #28a745;
-  --bg-color: #f8f8f8;
-  --text-color: #333;
-  --text-muted: #555;
-  --border-color: #eeeeee;
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.08);
-  --shadow-md: 2px 0 5px rgba(0, 0, 0, 0.1);
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --transition: all 0.2s ease-in-out;
+
+  /* --- Escala de Cinzas Minimalista --- */
+  --bg-color: #f4f7fa; /* Um cinza levemente azulado para o fundo */
+  --surface: #ffffff; /* Branco puro para os cards e sidebar */
+  --text-color: #1a1c1e; /* Quase preto, mais legível */
+  --text-muted: #44474e; /* Cinza médio para legendas */
+  --border-color: #dce2e9; /* Bordas sutis */
+
+  /* --- Material Design 3 Tokens --- */
+  --md-sys-color-primary: var(--primary-color);
+  --md-sys-color-on-primary: #ffffff;
+  --md-sys-color-surface: var(--surface);
+  --md-sys-color-on-surface: var(--text-color);
+  --md-sys-color-outline: var(--border-color);
+  --md-sys-color-primary-container: var(--primary-color);
+  --md-sys-color-secondary-container: var(--secondary-color);
+
+  /* --- Buttons --- */
+  --md-filled-button-container-shape: var(--radius-sm);
+  --md-outlined-button-container-shape: var(--radius-sm);
+  --md-filled-button-container-height: var(--height-line);
+
+  /* --- Elevação e Bordas --- */
+  --height-line: 36px;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.05); /* Sombra mais suave e espalhada */
+  --radius-sm: 6px; /* Arredondamento sutil */
+  --radius-md: 12px; /* Arredondamento moderno estilo M3 */
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* 2 LAYOUTS */
 * {
-  font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  background-color: var(--bg-color);
+  box-sizing: border-box;
 }
 
-html,
 body {
+  font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   margin: 0;
   padding: 0;
   height: 100%;
   width: 100%;
+  background-color: var(--bg-color);
 }
 
 #app-layout {
   display: flex;
   flex-direction: column;
   height: 100vh;
-}
-
-.app-header {
-  padding: 0 1rem;
-  box-shadow: var(--shadow-md);
+  padding: 1.5rem;
+  gap: 1.5rem;
 }
 
 .app-content {
   flex: 1;
-  position: relative;
   display: flex;
+  flex-direction: row;
   height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background-color: var(--bg-color);
 }
 
 #map-view {
-  flex: 1;
+  width: 60%;
   height: 100%;
-  width: 100%;
+  z-index: 1;
+  background-color: #eee;
+  border: 1px solid var(--terciary-color);
+  border-radius: var(--radius-md);
 }
 
 .sidebar {
-  right: 1rem;
-  top: 1rem;
-  bottom: 1rem;
-  width: 320px;
-  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  width: 40%;
+  max-width: 50%;
+  height: 100%;
   background: var(--card-bg);
   box-shadow: var(--shadow);
-  overflow-y: auto;
-  padding: 1rem;
-  z-index: 1000;
+  overflow: hidden;
+  padding: 1.5rem;
+  z-index: 2;
 }
 
+/* 3 COMPONENTES */
 .card {
   margin-bottom: 12px;
   border-radius: 6px;
@@ -72,14 +120,29 @@ body {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
   overflow: hidden;
   border: 1px solid #eee;
-  border-left: 4px solid var(--primary-color);
+  border-left: 3px solid var(--primary-color);
+}
+
+.card-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .card-title {
-  font-size: 1rem;
+  font-size: 1.5rem;
   font-weight: bold;
-  color: var(--primary);
-  margin-bottom: 0.5rem;
+  color: var(--primary-color);
+  padding-bottom: 1rem;
+  margin: 0;
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+  gap: 1.5rem;
 }
 
 .card-header {
@@ -100,6 +163,22 @@ body {
   flex-wrap: wrap;
   gap: 6px;
   margin-top: 10px;
+}
+
+.info-header h3 {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--primary-color);
+  margin: 0;
+  padding-bottom: 1rem;
+}
+
+.info-display {
+  overflow-y: auto;
+  padding-right: 8px;
+
+  scrollbar-width: thin;
+  scrollbar-color: var(--terciary-color) transparent;
 }
 
 .info-row {
@@ -123,6 +202,22 @@ body {
   word-break: break-word; /* Evita que o texto saia do card */
 }
 
+/* Links */
+.link {
+  width: 100%;
+  font-size: 0.75rem;
+  text-wrap: auto;
+  text-align: center;
+}
+
+.link-ouvidoria {
+  --md-filled-button-container-color: var(--primary-color);
+}
+
+.link-norma {
+  --md-filled-button-container-color: var(--accent-color);
+}
+
 /* Map Legend */
 .map-tooltip {
   font-weight: bold;
@@ -135,7 +230,6 @@ body {
   margin: 15px 0 20px 0;
   padding: 12px;
   max-width: 25vw;
-  background: var(--bg-color);
   border-radius: 10px;
 }
 
@@ -182,17 +276,16 @@ body {
 }
 
 /* Search */
-#municipio-select {
-  flex: 1;
-  padding: 8px;
-  font-size: 1rem;
-  border-radius: var(--radius-sm);
+.search-group {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  width: 100%;
 }
 
-.search-box {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+.search-select {
+  flex: 2;
+  --md-sys-typescale-body-large-size: 0.95rem;
 }
 
 /* KPI */
@@ -201,23 +294,30 @@ body {
   gap: 1rem;
 }
 
+.kpi-section {
+  border: var(--border-color) 2px solid;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sd);
+  padding: 1rem;
+  flex: 1;
+}
+
 .kpi-percent {
   display: block;
-  font-size: 2rem;
+  font-size: 2.5rem;
   font-weight: 800;
   line-height: 1;
   color: var(--primary-color);
 }
 
 .kpi-label {
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 1px;
   opacity: 0.9;
 }
 
 .kpi-footer {
-  margin-top: 10px;
   font-size: 0.8rem;
   border-top: 1px solid rgba(255, 255, 255, 0.2);
   padding-top: 18px;
