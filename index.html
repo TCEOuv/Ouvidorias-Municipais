@@ -346,7 +346,7 @@
               d["evidencia de instrucao normativa"]?.toLowerCase() === "sim";
 
             const instrucaoNormativaItem = temInstrucaoNormativa
-              ? `<md-filled-button href="${d["link da instrucao normativa"]}" target="_blank" class="link link-norma">Acesse o intrumento normativo de criação da Ouvidoria</md-filled-button>`
+              ? `<md-filled-button href="${d["link da instrucao normativa"]}" target="_blank" class="link link-norma">Acesse o intrumento normativo da Ouvidoria</md-filled-button>`
               : "";
 
             const siteItem = d.site
@@ -428,10 +428,6 @@
                 <div class="kpi-footer">
                   (<strong>${total}</strong> de 184 munícipios do Ceará)
                 </div>
-              </div>
-              <div class="kpi-section">
-                <span class="kpi-percent">${porcentagemSemNorma}%</span>
-                <span class="kpi-label">Municípios sem ouvidoria instituída</span>
               </div>
             </div>
           `;
