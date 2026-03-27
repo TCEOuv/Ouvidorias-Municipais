@@ -301,6 +301,7 @@ body {
   box-shadow: var(--shadow-sd);
   padding: 1rem;
   flex: 1;
+  justify-items: center;
 }
 
 .kpi-percent {
@@ -312,6 +313,7 @@ body {
 }
 
 .kpi-label {
+  display: block;
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 1px;
