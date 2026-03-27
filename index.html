@@ -271,6 +271,12 @@
           );
           const dadosMunicipio = csvData[chaveCsv] || {};
 
+          const select = document.getElementById("municipio-select");
+
+          if (select) {
+            select.value = municipioAlvo.name;
+          }
+
           const municipioInfoDiv = document.getElementById("municipio-info");
 
           if (Object.keys(dadosMunicipio).length === 0) {
