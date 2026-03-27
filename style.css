@@ -43,6 +43,7 @@
   --md-sys-color-outline: var(--border-color);
   --md-sys-color-primary-container: var(--primary-color);
   --md-sys-color-secondary-container: var(--secondary-color);
+  --md-menu-container-color: var(--surface);
 
   /* --- Buttons --- */
   --md-filled-button-container-shape: var(--radius-sm);
