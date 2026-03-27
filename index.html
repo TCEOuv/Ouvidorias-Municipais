@@ -479,10 +479,11 @@
         // 2. Re-enquadra o GeoJSON com um pequeno atraso para o CSS estabilizar
         if (geojsonLayer) {
           setTimeout(() => {
+            map.invalidateSize({ animate: true });
             map.fitBounds(geojsonLayer.getBounds(), {
               padding: window.innerWidth < 768 ? [10, 10] : [30, 30],
             });
-          }, 300);
+          }, 200);
         }
       }
 

@@ -347,3 +347,71 @@ body {
 .leaflet-interactive {
   outline: none !important;
 }
+
+/* 7 MOBILE */
+@media (max-width: 768px) {
+  /* Liberar a altura total da página */
+  body,
+  #app-layout {
+    height: auto;
+    overflow: visible;
+  }
+
+  #app-layout {
+    padding: 1rem; /* Reduz um pouco o padding em telas menores */
+    gap: 1rem;
+  }
+
+  /* Empilhar Mapa e Sidebar */
+  .app-content {
+    flex-direction: column;
+    height: auto;
+    overflow: visible;
+  }
+
+  /* Ajustar o Mapa para uma altura fixa e largura total */
+  #map-view {
+    width: 100%;
+    height: 350px; /* Definimos uma altura para o mapa não sumir */
+    flex: none; /* Garante que ele não tente crescer/diminuir */
+  }
+
+  /* Ajustar Sidebar para expandir com o conteúdo */
+  .sidebar {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    overflow: visible;
+    padding: 0; /* Remove padding lateral se necessário para ganhar espaço */
+    box-shadow: none; /* No mobile, sombras pesadas em containers grandes cansam a vista */
+  }
+
+  /* Destravar os containers internos para o scroll global */
+  .card-panel,
+  .card-content,
+  .info-display {
+    height: auto;
+    overflow: visible;
+    display: block; /* Muda de flex para block para o fluxo de texto natural */
+  }
+
+  /* Remover a legenda do mapa em dispositivos móveis */
+  .leaflet-control-container .map-legend {
+    display: none !important;
+  }
+
+  /* Ajustar a busca para não esmagar o botão */
+  .search-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  /* Empilhar os KPIs (Cards de indicadores) */
+  .kpi-main {
+    flex-direction: column;
+  }
+
+  .kpi-section {
+    width: 100%;
+  }
+}
