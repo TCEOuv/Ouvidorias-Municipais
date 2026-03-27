@@ -200,13 +200,12 @@
               },
             }).addTo(map);
 
-            // 2. População do Select (Otimizada com DocumentFragment)
+            // 2. População do Select
             popularSelect(data.features);
 
-            // 3. Ajuste de enquadramento (Faz o mapa focar no Ceará)
-            map.fitBounds(geojsonLayer.getBounds(), {
-              padding: [20, 20],
-            });
+            // 3. Configuração de limites
+            const CearaBounds = geojsonLayer.getBounds().pad(0.1);
+            map.setMaxBounds(CearaBounds);
 
             ajustarLayout();
           })
@@ -263,6 +262,22 @@
             color: "#000",
             fillOpacity: 0.8,
           });
+
+          if (window.innerWidth < 768) {
+            // Usamos flyToBounds para um movimento suave de BI
+            map.flyToBounds(layer.getBounds(), {
+              padding: [50, 50], // Espaço livre nas bordas
+              duration: 1.5, // Tempo da animação em segundos
+            });
+
+            // Se você quiser que o mapa suba para o topo da tela ao selecionar:
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          } else {
+            // No Desktop, apenas um ajuste sutil se o município estiver fora da visão
+            if (!map.getBounds().contains(layer.getBounds())) {
+              map.panTo(layer.getBounds().getCenter());
+            }
+          }
 
           // 4. Busca e Exibição dos Dados no Painel Lateral
           // Procuramos no csvData usando a chave normalizada
